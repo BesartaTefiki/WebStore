@@ -9,5 +9,6 @@ namespace WebStore.Repositories.Interfaces
         Task AddAsync(Order order);
         Task UpdateAsync(Order order);
         Task DeleteAsync(int id);
+        Task<int> GetReservedQuantityForProductAsync(int productId);
     }
 }

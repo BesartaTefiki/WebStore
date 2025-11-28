@@ -34,7 +34,6 @@ namespace WebStore.Services
             return await _orderRepository.GetByIdWithDetailsAsync(id);
         }
 
- 
         public async Task<Order> CreateAsync(int clientId, List<OrderItemDto> items)
         {
             var client = await _clientRepository.GetByIdAsync(clientId);
@@ -42,6 +41,11 @@ namespace WebStore.Services
             {
                 throw new InvalidOperationException(
                     $"Client with id {clientId} does not exist.");
+            }
+
+            if (items == null || items.Count == 0)
+            {
+                throw new InvalidOperationException("Order must contain at least one item.");
             }
 
             var order = new Order
@@ -59,6 +63,23 @@ namespace WebStore.Services
                 {
                     throw new InvalidOperationException(
                         $"Product with id {itemDto.ProductId} does not exist.");
+                }
+
+                var reserved = await _orderRepository
+                    .GetReservedQuantityForProductAsync(itemDto.ProductId);
+
+                var available = product.Quantity - reserved;
+
+                if (available <= 0)
+                {
+                    throw new InvalidOperationException(
+                        $"Product '{product.Name}' is out of stock. Initial stock: {product.Quantity}, already reserved: {reserved}.");
+                }
+
+                if (itemDto.Quantity > available)
+                {
+                    throw new InvalidOperationException(
+                        $"Not enough stock for product '{product.Name}'. Available: {available}, requested: {itemDto.Quantity}.");
                 }
 
                 order.Items.Add(new OrderItem

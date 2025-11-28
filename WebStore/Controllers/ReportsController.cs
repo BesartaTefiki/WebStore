@@ -5,6 +5,13 @@ using WebStore.Services.Interfaces;
 
 namespace WebStore.Controllers
 {
+    /// <summary>
+    /// Provides earnings and top product reports.
+    /// </summary>
+    /// <remarks>
+    /// Base route: /api/reports  
+    /// Only admin and advanced users can access reports.
+    /// </remarks>
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "admin,advanced")]
@@ -17,7 +24,12 @@ namespace WebStore.Controllers
             _reportService = reportService;
         }
 
-        // GET: api/reports?from=2025-11-01&to=2025-11-23
+        /// <summary>
+        /// Returns earnings report for a custom date range.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/reports?from=YYYY-MM-DD&amp;to=YYYY-MM-DD
+        /// </remarks>
         [HttpGet]
         public async Task<ActionResult<Report>> GetRangeReport(
             [FromQuery] DateTime from,
@@ -27,7 +39,12 @@ namespace WebStore.Controllers
             return Ok(report);
         }
 
-        // GET: api/reports/daily?date=2025-11-23
+        /// <summary>
+        /// Returns daily earnings report.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/reports/daily?date=YYYY-MM-DD
+        /// </remarks>
         [HttpGet("daily")]
         public async Task<ActionResult<Report>> GetDaily([FromQuery] DateTime date)
         {
@@ -35,7 +52,12 @@ namespace WebStore.Controllers
             return Ok(report);
         }
 
-        // GET: api/reports/monthly?year=2025&month=11
+        /// <summary>
+        /// Returns monthly earnings report.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/reports/monthly?year=YYYY&amp;month=MM
+        /// </remarks>
         [HttpGet("monthly")]
         public async Task<ActionResult<Report>> GetMonthly([FromQuery] int year, [FromQuery] int month)
         {
@@ -43,7 +65,12 @@ namespace WebStore.Controllers
             return Ok(report);
         }
 
-        // GET: api/reports/top-products?from=2025-11-01&to=2025-11-23&topN=5
+        /// <summary>
+        /// Returns top selling products for a given period.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/reports/top-products?from=YYYY-MM-DD&amp;to=YYYY-MM-DD&amp;topN=5
+        /// </remarks>
         [HttpGet("top-products")]
         public async Task<ActionResult<IEnumerable<TopProductDto>>> GetTopProducts(
             [FromQuery] DateTime from,

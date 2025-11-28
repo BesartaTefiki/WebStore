@@ -53,5 +53,12 @@ namespace WebStore.Repositories.Implementations
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task<int> GetReservedQuantityForProductAsync(int productId)
+        {
+            return await _context.OrderItems
+                .Where(oi => oi.ProductId == productId &&
+                             oi.Order.Status != "Cancelled")
+                .SumAsync(oi => (int?)oi.Quantity ?? 0);
+        }
     }
 }

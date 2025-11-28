@@ -17,8 +17,13 @@ namespace WebStore.Controllers
             _productService = productService;
         }
 
-        // GET: api/products
-        // Allow anonymous: shop can be browsed without login
+        /// <summary>
+        /// Returns all products.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/products  
+        /// Public endpoint.
+        /// </remarks>
         [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
@@ -27,41 +32,65 @@ namespace WebStore.Controllers
             return Ok(products);
         }
 
-        // GET: api/products/5
+        /// <summary>
+        /// Returns a product by id.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/products/{id}  
+        /// Public endpoint.
+        /// </remarks>
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             var product = await _productService.GetByIdAsync(id);
-            if (product == null)
-                return NotFound();
-
+            if (product == null) return NotFound();
             return Ok(product);
         }
 
-        // POST: api/products
-        // All roles can manage products: admin, advanced, simple
+        /// <summary>
+        /// Creates a new product.
+        /// </summary>
+        /// <remarks>
+        /// POST /api/products  
+        /// Roles allowed: admin, advanced, simple.  
+        /// Clients cannot modify products.
+        /// </remarks>
         [Authorize(Roles = "admin,advanced,simple")]
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct(Product product)
         {
+            var clientClaim = User.FindFirst("client_id")?.Value;
+            if (!string.IsNullOrEmpty(clientClaim))
+                return Forbid("Clients cannot manage products.");
+
             var created = await _productService.CreateAsync(product);
             return CreatedAtAction(nameof(GetProduct), new { id = created.Id }, created);
         }
 
-        // PUT: api/products/5
+        /// <summary>
+        /// Updates an existing product.
+        /// </summary>
+        /// <remarks>
+        /// PUT /api/products/{id}  
+        /// Roles allowed: admin, advanced, simple.
+        /// </remarks>
         [Authorize(Roles = "admin,advanced,simple")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(int id, Product product)
         {
-            if (id != product.Id)
-                return BadRequest();
-
+            if (id != product.Id) return BadRequest();
             await _productService.UpdateAsync(product);
             return NoContent();
         }
 
-        // DELETE: api/products/5
+        /// <summary>
+        /// Deletes a product.
+        /// </summary>
+        /// <remarks>
+        /// DELETE /api/products/{id}  
+        /// Roles allowed: admin, advanced, simple.
+        /// </remarks>
         [Authorize(Roles = "admin,advanced,simple")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
@@ -70,8 +99,13 @@ namespace WebStore.Controllers
             return NoContent();
         }
 
-
-        // PUT: api/products/5/discount (admin)
+        /// <summary>
+        /// Applies discount to a product.
+        /// </summary>
+        /// <remarks>
+        /// PUT /api/products/{id}/discount  
+        /// Only admin can apply discounts.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         [HttpPut("{id}/discount")]
         public async Task<IActionResult> SetDiscount(int id, [FromBody] DiscountRequestDto dto)
@@ -80,8 +114,13 @@ namespace WebStore.Controllers
             return NoContent();
         }
 
-      
-        // GET: api/products/search?genderId=1&categoryId=2&brandId=3&priceMin=10&priceMax=100&sizeId=1&colorId=2&inStock=true
+        /// <summary>
+        /// Searches products using optional filters.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/products/search  
+        /// Public endpoint.
+        /// </remarks>
         [AllowAnonymous]
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<Product>>> SearchProducts(
@@ -92,33 +131,28 @@ namespace WebStore.Controllers
             [FromQuery] decimal? priceMax,
             [FromQuery] int? sizeId,
             [FromQuery] int? colorId,
-            [FromQuery] bool? inStock
-        )
+            [FromQuery] bool? inStock)
         {
             var products = await _productService.SearchAsync(
-                categoryId,
-                genderId,
-                brandId,
-                priceMin,
-                priceMax,
-                sizeId,
-                colorId,
-                inStock
-            );
+                categoryId, genderId, brandId,
+                priceMin, priceMax, sizeId, colorId, inStock);
 
             return Ok(products);
         }
 
-        // GET: api/products/5/quantity
+        /// <summary>
+        /// Returns stock quantity for a product.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/products/{id}/quantity  
+        /// Public endpoint.
+        /// </remarks>
         [AllowAnonymous]
         [HttpGet("{id}/quantity")]
         public async Task<IActionResult> GetProductQuantity(int id)
         {
-            ProductQuantityDto? dto = await _productService.GetQuantityAsync(id);
-
-            if (dto == null)
-                return NotFound();
-
+            var dto = await _productService.GetQuantityAsync(id);
+            if (dto == null) return NotFound();
             return Ok(dto);
         }
     }

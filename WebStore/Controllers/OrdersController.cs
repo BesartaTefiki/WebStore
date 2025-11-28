@@ -1,8 +1,4 @@
-﻿// Controllers/OrdersController.cs
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebStore.DTOs;
 using WebStore.Models;
@@ -21,7 +17,13 @@ namespace WebStore.Controllers
             _orderService = orderService;
         }
 
-        // GET: api/orders  (admin + advanced)
+        /// <summary>
+        /// Returns all orders.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/orders  
+        /// Roles allowed: admin, advanced.
+        /// </remarks>
         [Authorize(Roles = "admin,advanced")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetAll()
@@ -30,50 +32,48 @@ namespace WebStore.Controllers
             return Ok(orders);
         }
 
-        // GET: api/orders/5  (admin + advanced)
+        /// <summary>
+        /// Returns order by id.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/orders/{id}  
+        /// Roles allowed: admin, advanced.
+        /// </remarks>
         [Authorize(Roles = "admin,advanced")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetById(int id)
         {
             var order = await _orderService.GetByIdAsync(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-
+            if (order == null) return NotFound();
             return Ok(order);
         }
 
-        // POST: api/orders  (any logged-in user – client comes from JWT)
+        /// <summary>
+        /// Creates a new order for the logged-in client.
+        /// </summary>
+        /// <remarks>
+        /// POST /api/orders  
+        /// Requires authenticated user with client_id claim.
+        /// </remarks>
         [Authorize]
         [HttpPost]
         public async Task<ActionResult<Order>> Create(CreateOrderRequest request)
         {
-            
-            var clientIdClaim = User.FindFirst("client_id")?.Value;
-            if (string.IsNullOrEmpty(clientIdClaim))
-            {
-                return BadRequest(new
-                {
-                    message = "Logged-in user is not linked to a client."
-                });
-            }
+            var clientClaim = User.FindFirst("client_id")?.Value;
+            if (string.IsNullOrEmpty(clientClaim))
+                return BadRequest(new { message = "User is not linked to a client." });
 
-            if (request.Items == null || request.Items.Count == 0)
-            {
-                return BadRequest(new
-                {
-                    message = "Order must contain at least one item."
-                });
-            }
-
-            int clientId = int.Parse(clientIdClaim);
-
-            var order = await _orderService.CreateAsync(clientId, request.Items);
+            var order = await _orderService.CreateAsync(int.Parse(clientClaim), request.Items);
             return CreatedAtAction(nameof(GetById), new { id = order.Id }, order);
         }
 
-        // PUT: api/orders/5/status  (admin + advanced)
+        /// <summary>
+        /// Updates order status.
+        /// </summary>
+        /// <remarks>
+        /// PUT /api/orders/{id}/status  
+        /// Roles allowed: admin, advanced.
+        /// </remarks>
         [Authorize(Roles = "admin,advanced")]
         [HttpPut("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, UpdateOrderStatusRequest request)

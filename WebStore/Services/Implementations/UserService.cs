@@ -109,5 +109,145 @@ namespace WebStore.Services
                 ClientId = user.ClientId
             };
         }
+        public async Task<IEnumerable<UserDto>> GetAllAsync()
+        {
+            return await _context.Users
+                .Include(u => u.Role)
+                .Select(u => new UserDto
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    Role = u.Role.Name,
+                    ClientId = u.ClientId
+                })
+                .ToListAsync();
+        }
+
+        public async Task<UserDto?> GetByIdAsync(int id)
+        {
+            var user = await _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+                return null;
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Role = user.Role.Name,
+                ClientId = user.ClientId
+            };
+        }
+        public async Task<UserDto?> CreateUserAsync(CreateUserAdminRequestDto request)
+        {
+            var exists = await _context.Users
+                .AnyAsync(u => u.Username == request.Username);
+
+            if (exists)
+            {
+                throw new InvalidOperationException("Username already exists.");
+            }
+
+            var normalizedRole = request.Role.ToLower().Trim();
+
+            var role = await _context.Roles
+                .FirstOrDefaultAsync(r => r.Name.ToLower() == normalizedRole);
+
+            if (role == null)
+            {
+                throw new InvalidOperationException($"Role '{request.Role}' not found.");
+            }
+
+            if (request.IsClient && normalizedRole != "simple")
+            {
+                throw new InvalidOperationException("Client accounts must have role 'simple'.");
+            }
+
+            Client? client = null;
+            if (request.IsClient)
+            {
+                client = new Client
+                {
+                    FullName = request.Username,
+                    Email = $"{request.Username}@example.com"
+                };
+                _context.Clients.Add(client);
+            }
+
+            var user = new User
+            {
+                Username = request.Username,
+                Password = request.Password,
+                RoleId = role.Id,
+                Client = client
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            await _context.Entry(user).Reference(u => u.Role).LoadAsync();
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Role = user.Role.Name,
+                ClientId = user.ClientId
+            };
+        }
+
+        public async Task<UserDto?> UpdateRoleAsync(int id, UpdateUserRoleRequestDto request)
+        {
+            var user = await _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+                return null;
+
+            var normalizedRole = request.Role.ToLower().Trim();
+
+            var role = await _context.Roles
+                .FirstOrDefaultAsync(r => r.Name.ToLower() == normalizedRole);
+
+            if (role == null)
+            {
+                throw new InvalidOperationException($"Role '{request.Role}' not found.");
+            }
+
+            user.RoleId = role.Id;
+
+            if (normalizedRole == "admin" || normalizedRole == "advanced")
+            {
+                if (user.ClientId.HasValue)
+                {
+                    user.ClientId = null;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            await _context.Entry(user).Reference(u => u.Role).LoadAsync();
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Role = user.Role.Name,
+                ClientId = user.ClientId
+            };
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return false;
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

@@ -5,6 +5,13 @@ using WebStore.Services.Interfaces;
 
 namespace WebStore.Controllers
 {
+    /// <summary>
+    /// Manages clients (customers) in the system.
+    /// </summary>
+    /// <remarks>
+    /// Base route: /api/clients  
+    /// Protected by roles: admin, advanced.
+    /// </remarks>
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "admin,advanced")]
@@ -17,6 +24,13 @@ namespace WebStore.Controllers
             _clientService = clientService;
         }
 
+        /// <summary>
+        /// Returns all clients.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/clients  
+        /// Only admin and advanced users can access this.
+        /// </remarks>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Client>>> GetAll()
         {
@@ -24,6 +38,12 @@ namespace WebStore.Controllers
             return Ok(clients);
         }
 
+        /// <summary>
+        /// Returns a client by ID.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/clients/{id}
+        /// </remarks>
         [HttpGet("{id}")]
         public async Task<ActionResult<Client>> GetById(int id)
         {
@@ -32,6 +52,12 @@ namespace WebStore.Controllers
             return Ok(client);
         }
 
+        /// <summary>
+        /// Creates a new client.
+        /// </summary>
+        /// <remarks>
+        /// POST /api/clients
+        /// </remarks>
         [HttpPost]
         public async Task<ActionResult<Client>> Create(Client client)
         {
@@ -39,6 +65,12 @@ namespace WebStore.Controllers
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
+        /// <summary>
+        /// Updates an existing client.
+        /// </summary>
+        /// <remarks>
+        /// PUT /api/clients/{id}
+        /// </remarks>
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Client client)
         {
@@ -48,6 +80,12 @@ namespace WebStore.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Deletes a client.
+        /// </summary>
+        /// <remarks>
+        /// DELETE /api/clients/{id}
+        /// </remarks>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

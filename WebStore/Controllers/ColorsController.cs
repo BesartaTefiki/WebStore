@@ -5,6 +5,12 @@ using WebStore.Services.Interfaces;
 
 namespace WebStore.Controllers
 {
+    /// <summary>
+    /// Manages available product colors.
+    /// </summary>
+    /// <remarks>
+    /// Base route: /api/colors
+    /// </remarks>
     [ApiController]
     [Route("api/[controller]")]
     public class ColorsController : ControllerBase
@@ -16,6 +22,13 @@ namespace WebStore.Controllers
             _colorService = colorService;
         }
 
+        /// <summary>
+        /// Returns all colors.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/colors  
+        /// Public endpoint.
+        /// </remarks>
         [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Color>>> GetAll()
@@ -24,6 +37,13 @@ namespace WebStore.Controllers
             return Ok(colors);
         }
 
+        /// <summary>
+        /// Creates a new color.
+        /// </summary>
+        /// <remarks>
+        /// POST /api/colors  
+        /// Allowed roles: admin, advanced, simple.
+        /// </remarks>
         [Authorize(Roles = "admin,advanced,simple")]
         [HttpPost]
         public async Task<ActionResult<Color>> Create(Color color)

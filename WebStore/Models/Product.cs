@@ -21,14 +21,10 @@ namespace WebStore.Models
         public int BrandId { get; set; }
         public Brand? Brand { get; set; }
 
-        public int SizeId { get; set; }
-        public Size? Size { get; set; }
-
-        public int ColorId { get; set; }
-        public Color? Color { get; set; }
-
         public int GenderId { get; set; }
         public Gender? Gender { get; set; }
+        public ICollection<Size> Sizes { get; set; } = new List<Size>();
+        public ICollection<Color> Colors { get; set; } = new List<Color>();
 
         [JsonIgnore]
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();

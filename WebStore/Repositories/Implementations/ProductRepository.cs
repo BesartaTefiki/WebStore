@@ -19,9 +19,9 @@ namespace WebStore.Repositories.Implementations
             return await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Include(p => p.Color)
                 .Include(p => p.Gender)
-                .Include(p => p.Size)
+                .Include(p => p.Sizes)  
+                .Include(p => p.Colors) 
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -30,9 +30,9 @@ namespace WebStore.Repositories.Implementations
             return await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Include(p => p.Color)
                 .Include(p => p.Gender)
-                .Include(p => p.Size)
+                .Include(p => p.Sizes)  
+                .Include(p => p.Colors) 
                 .ToListAsync();
         }
 
@@ -42,9 +42,9 @@ namespace WebStore.Repositories.Implementations
                 .Where(p => p.Quantity <= 0)
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Include(p => p.Color)
                 .Include(p => p.Gender)
-                .Include(p => p.Size)
+                .Include(p => p.Sizes) 
+                .Include(p => p.Colors)  
                 .ToListAsync();
         }
 
@@ -53,10 +53,11 @@ namespace WebStore.Repositories.Implementations
             return await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Include(p => p.Color)
                 .Include(p => p.Gender)
-                .Include(p => p.Size)
-                .Where(p => p.Color.Name.ToLower() == color.ToLower())
+                .Include(p => p.Sizes)
+                .Include(p => p.Colors)
+                .Where(p =>
+                    p.Colors.Any(c => c.Name.ToLower() == color.ToLower()))
                 .ToListAsync();
         }
 
@@ -65,9 +66,9 @@ namespace WebStore.Repositories.Implementations
             return await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Include(p => p.Color)
                 .Include(p => p.Gender)
-                .Include(p => p.Size)
+                .Include(p => p.Sizes)
+                .Include(p => p.Colors)
                 .Where(p => p.Brand.Name.ToLower() == brand.ToLower())
                 .ToListAsync();
         }
@@ -77,9 +78,9 @@ namespace WebStore.Repositories.Implementations
             return await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Include(p => p.Color)
                 .Include(p => p.Gender)
-                .Include(p => p.Size)
+                .Include(p => p.Sizes)
+                .Include(p => p.Colors)
                 .Where(p => p.Category.Name.ToLower() == category.ToLower())
                 .ToListAsync();
         }
@@ -89,9 +90,9 @@ namespace WebStore.Repositories.Implementations
             return await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Include(p => p.Color)
                 .Include(p => p.Gender)
-                .Include(p => p.Size)
+                .Include(p => p.Sizes)
+                .Include(p => p.Colors)
                 .Where(p => p.Gender.Name.ToLower() == gender.ToLower())
                 .ToListAsync();
         }
@@ -101,10 +102,11 @@ namespace WebStore.Repositories.Implementations
             return await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Include(p => p.Color)
                 .Include(p => p.Gender)
-                .Include(p => p.Size)
-                .Where(p => p.Size.Name.ToLower() == size.ToLower())
+                .Include(p => p.Sizes)
+                .Include(p => p.Colors)
+                .Where(p =>
+                    p.Sizes.Any(s => s.Name.ToLower() == size.ToLower()))
                 .ToListAsync();
         }
 
@@ -113,9 +115,9 @@ namespace WebStore.Repositories.Implementations
             return await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Include(p => p.Color)
                 .Include(p => p.Gender)
-                .Include(p => p.Size)
+                .Include(p => p.Sizes)
+                .Include(p => p.Colors)
                 .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
                 .ToListAsync();
         }
@@ -134,9 +136,9 @@ namespace WebStore.Repositories.Implementations
             var query = _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Include(p => p.Size)
-                .Include(p => p.Color)
                 .Include(p => p.Gender)
+                .Include(p => p.Sizes)
+                .Include(p => p.Colors)
                 .AsQueryable();
 
             if (categoryId.HasValue)
@@ -149,10 +151,12 @@ namespace WebStore.Repositories.Implementations
                 query = query.Where(p => p.BrandId == brandId.Value);
 
             if (sizeId.HasValue)
-                query = query.Where(p => p.SizeId == sizeId.Value);
+                query = query.Where(p =>
+                    p.Sizes.Any(s => s.Id == sizeId.Value));
 
             if (colorId.HasValue)
-                query = query.Where(p => p.ColorId == colorId.Value);
+                query = query.Where(p =>
+                    p.Colors.Any(c => c.Id == colorId.Value));
 
             if (priceMin.HasValue)
                 query = query.Where(p => p.Price >= priceMin.Value);
@@ -168,6 +172,22 @@ namespace WebStore.Repositories.Implementations
 
         public async Task AddProduct(Product product)
         {
+            if (product.Sizes != null && product.Sizes.Count > 0)
+            {
+                foreach (var size in product.Sizes)
+                {
+                    _context.Attach(size);
+                }
+            }
+
+            if (product.Colors != null && product.Colors.Count > 0)
+            {
+                foreach (var color in product.Colors)
+                {
+                    _context.Attach(color);
+                }
+            }
+
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
         }

@@ -5,6 +5,12 @@ using WebStore.Services.Interfaces;
 
 namespace WebStore.Controllers
 {
+    /// <summary>
+    /// Manages available product sizes.
+    /// </summary>
+    /// <remarks>
+    /// Base route: /api/sizes
+    /// </remarks>
     [ApiController]
     [Route("api/[controller]")]
     public class SizesController : ControllerBase
@@ -16,6 +22,13 @@ namespace WebStore.Controllers
             _sizeService = sizeService;
         }
 
+        /// <summary>
+        /// Returns all sizes.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/sizes  
+        /// Public endpoint.
+        /// </remarks>
         [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Size>>> GetAll()
@@ -24,6 +37,13 @@ namespace WebStore.Controllers
             return Ok(sizes);
         }
 
+        /// <summary>
+        /// Creates a new size.
+        /// </summary>
+        /// <remarks>
+        /// POST /api/sizes  
+        /// Allowed roles: admin, advanced, simple.
+        /// </remarks>
         [Authorize(Roles = "admin,advanced,simple")]
         [HttpPost]
         public async Task<ActionResult<Size>> Create(Size size)

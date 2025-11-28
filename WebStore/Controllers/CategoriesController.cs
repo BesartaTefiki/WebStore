@@ -5,6 +5,12 @@ using WebStore.Services.Interfaces;
 
 namespace WebStore.Controllers
 {
+    /// <summary>
+    /// Manages product categories.
+    /// </summary>
+    /// <remarks>
+    /// Base route: /api/categories
+    /// </remarks>
     [ApiController]
     [Route("api/[controller]")]
     public class CategoriesController : ControllerBase
@@ -16,7 +22,13 @@ namespace WebStore.Controllers
             _categoryService = categoryService;
         }
 
-        // GET: api/categories  (public)
+        /// <summary>
+        /// Returns all categories.
+        /// </summary>
+        /// <remarks>
+        /// GET /api/categories  
+        /// Public endpoint.
+        /// </remarks>
         [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetAll()
@@ -25,7 +37,13 @@ namespace WebStore.Controllers
             return Ok(categories);
         }
 
-        // POST: api/categories (only logged users)
+        /// <summary>
+        /// Creates a new category.
+        /// </summary>
+        /// <remarks>
+        /// POST /api/categories  
+        /// Allowed roles: admin, advanced, simple.
+        /// </remarks>
         [Authorize(Roles = "admin,advanced,simple")]
         [HttpPost]
         public async Task<ActionResult<Category>> Create(Category category)

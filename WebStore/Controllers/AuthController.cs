@@ -16,25 +16,35 @@ namespace WebStore.Controllers
             _userService = userService;
         }
 
-        // POST: api/auth/register
+        /// <summary>
+        /// Registers a new user.
+        /// </summary>
+        /// <remarks>
+        /// POST /api/auth/register  
+        /// Public endpoint.
+        /// </remarks>
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterRequestDto request)
+        public async Task<ActionResult<RegisterResponseDto>> Register(RegisterRequestDto request)
         {
             var result = await _userService.RegisterAsync(request);
 
             if (result == null)
-            {
                 return BadRequest(new { message = "Username already exists" });
-            }
 
             return Ok(result);
         }
 
-        // POST: api/auth/login
+        /// <summary>
+        /// Authenticates user and returns JWT.
+        /// </summary>
+        /// <remarks>
+        /// POST /api/auth/login  
+        /// Public endpoint.
+        /// </remarks>
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequestDto request)
+        public async Task<ActionResult<LoginResponseDto>> Login(LoginRequestDto request)
         {
             var response = await _userService.LoginAsync(request);
 
