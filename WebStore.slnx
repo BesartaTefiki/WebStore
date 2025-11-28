@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="WebStore.Tests/WebStore.Tests.csproj" Id="bc72f3a6-2bdf-4719-b52a-36f86687d768" />
+  <Project Path="WebStore/WebStore.csproj" />
+</Solution>
