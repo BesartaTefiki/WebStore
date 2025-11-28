@@ -41,3 +41,62 @@ Navigate to your backend folder:
 
 ```bash
 cd path/to/WebStore
+
+# WebStore – Backend & Frontend Setup Instructions
+
+## Apply Database Migrations
+
+    dotnet ef database update
+
+## Run the Backend
+
+    dotnet run
+
+API will start on:
+
+    http://localhost:5169
+    https://localhost:7183
+
+---
+
+## Frontend Setup (React)
+
+Navigate to the frontend:
+
+    cd path/to/webstore-frontend
+
+Install dependencies:
+
+    npm install
+
+Start the development server:
+
+    npm run dev
+
+---
+
+## Running the Project
+
+Once both backend and frontend are running:
+
+Open the React app (usually at):
+
+    http://localhost:5173
+
+The frontend will automatically connect to the API.
+
+Use the seeded admin account:
+
+    username: admin
+    password: admin123
+
+---
+
+## Built With
+
+- ASP.NET Core Web API  
+- Entity Framework Core  
+- React.js  
+- Vite  
+- SQL Server / LocalDB  
+- Postman (API testing)
