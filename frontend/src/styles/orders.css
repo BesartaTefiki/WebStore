@@ -1,0 +1,271 @@
+.orders-page {
+  max-width: 1100px;
+  margin: 2rem auto 4rem;
+  padding: 0 1.5rem;
+  color: #fff;
+}
+
+.orders-page .page-title {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+
+.order-create-card {
+  background: radial-gradient(circle at top left, #23253b, #111219);
+  border-radius: 18px;
+  padding: 1.5rem 1.75rem 1.25rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
+}
+
+.order-create-card h2 {
+  margin: 0 0 0.25rem;
+}
+
+.order-create-hint {
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+  color: #9aa3b5;
+}
+
+.order-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.order-form-row {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  gap: 1rem;
+}
+
+.order-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.order-form-field label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+  color: #9aa3b5;
+}
+
+.order-form-field select,
+.order-form-field input {
+  border-radius: 999px;
+  border: 1px solid #2d3141;
+  padding: 0.45rem 0.9rem;
+  background: rgba(5, 7, 12, 0.95);
+  color: #fff;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.order-form-field select:focus,
+.order-form-field input:focus {
+  border-color: #4fa8ff;
+  box-shadow: 0 0 0 1px rgba(79, 168, 255, 0.4);
+}
+
+.order-form-qty input {
+  max-width: 90px;
+}
+
+.order-error {
+  color: #ff6b81;
+  font-size: 0.85rem;
+}
+
+.order-success {
+  color: #3dd68c;
+  font-size: 0.85rem;
+}
+
+.btn-primary {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  padding: 0.45rem 1.3rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #4fa8ff, #48e4ff);
+  color: #050711;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+
+.orders-list h2 {
+  margin-bottom: 1rem;
+}
+
+.order-card {
+  background: rgba(7, 9, 17, 0.95);
+  border-radius: 16px;
+  padding: 1.1rem 1.4rem 1rem;
+  margin-bottom: 1.1rem;
+  border: 1px solid #202233;
+}
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.order-card-header h3 {
+  margin: 0 0 0.2rem;
+}
+
+.order-meta {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #9aa3b5;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+
+.order-status {
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.order-status-pending {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffd54f;
+}
+
+.order-status-confirmed {
+  background: rgba(61, 214, 140, 0.15);
+  color: #3dd68c;
+}
+
+.order-status-cancelled {
+  background: rgba(248, 113, 113, 0.14);
+  color: #fca5a5;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+}
+
+
+.order-status-edit {
+  margin-top: 0.55rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #9aa3b5;
+}
+
+.order-status-edit label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.order-status-edit select {
+  border-radius: 999px;
+  border: 1px solid #323548;
+  background: rgba(9, 11, 20, 0.95);
+  color: #e5e7eb;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+
+.btn-secondary {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #323548;
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: rgba(30, 41, 59, 1);
+}
+
+
+.order-client {
+  text-align: right;
+  font-size: 0.8rem;
+}
+
+.order-client-label {
+  display: block;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: #9aa3b5;
+}
+
+.order-client-name {
+  display: block;
+}
+
+.order-client-email {
+  display: block;
+  color: #9aa3b5;
+}
+
+
+.order-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px dashed #27293a;
+  padding-top: 0.6rem;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  padding: 0.15rem 0;
+}
+
+.order-item-name {
+  flex: 1;
+}
+
+.order-item-qty {
+  width: 80px;
+  text-align: center;
+}
+
+.order-item-price {
+  width: 80px;
+  text-align: right;
+}
+
+
+@media (max-width: 720px) {
+  .order-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .order-client {
+    text-align: left;
+  }
+
+  .order-status-edit {
+    flex-wrap: wrap;
+  }
+}

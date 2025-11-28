@@ -1,0 +1,77 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: radial-gradient(circle at top left, #111827 0, #020617 55%, #000 100%);
+  color: #f9fafb;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
+  padding: 2rem 3rem 3rem;
+}
+
+@media (max-width: 768px) {
+  .app-main {
+    padding: 1.5rem 1rem 2.5rem;
+  }
+}
+
+.home-page,
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero {
+  margin-bottom: 2rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.7rem, 4vw, 3.2rem);
+  margin-bottom: 0.25rem;
+}
+
+.hero-subtitle {
+  margin: 0;
+  color: #9ca3af;
+}
+
+.home-section {
+  margin-top: 2rem;
+}
+
+.section-title,
+.page-title {
+  font-size: 1.6rem;
+  margin: 0 0 0.5rem;
+}
+
+.page-subtitle {
+  margin: 0 0 1.5rem;
+  color: #9ca3af;
+}
+
+.error-text {
+  color: #f97373;
+}
+
+.auth-page {
+  max-width: 480px;
+}
