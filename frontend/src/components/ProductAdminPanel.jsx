@@ -10,9 +10,13 @@ import { createProduct } from "../api/productsApi";
 import "../styles/products.css";
 
 export default function ProductAdminPanel({ onProductCreated }) {
-  const role = localStorage.getItem("role");
+  const rawRole = localStorage.getItem("role");
+  const role = rawRole ? rawRole.toLowerCase() : "";
+  const hasClientId = !!localStorage.getItem("clientId");
+
   const isProductManager =
-    role === "admin" || role === "advanced" || role === "simple";
+    (role === "admin" || role === "advanced" || role === "simple") &&
+    !hasClientId;
 
   const [lookupsLoaded, setLookupsLoaded] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -29,8 +33,8 @@ export default function ProductAdminPanel({ onProductCreated }) {
     categoryId: "",
     brandId: "",
     genderId: "",
-    sizeId: "",
-    colorId: "",
+    sizeIds: [],
+    colorIds: [],
     discountPercent: "",
   });
 
@@ -78,6 +82,29 @@ export default function ProductAdminPanel({ onProductCreated }) {
     }));
   }
 
+  function toggleIdInList(list, id) {
+    if (list.includes(id)) {
+      return list.filter((x) => x !== id);
+    }
+    return [...list, id];
+  }
+
+  function handleSizeToggle(e) {
+    const value = e.target.value;
+    setForm((f) => ({
+      ...f,
+      sizeIds: toggleIdInList(f.sizeIds, value),
+    }));
+  }
+
+  function handleColorToggle(e) {
+    const value = e.target.value;
+    setForm((f) => ({
+      ...f,
+      colorIds: toggleIdInList(f.colorIds, value),
+    }));
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
@@ -91,26 +118,39 @@ export default function ProductAdminPanel({ onProductCreated }) {
       !form.categoryId ||
       !form.brandId ||
       !form.genderId ||
-      !form.sizeId ||
-      !form.colorId
+      form.sizeIds.length === 0 ||
+      form.colorIds.length === 0
     ) {
-      setError("Please choose category, brand, gender, size and color.");
+      setError(
+        "Please choose category, brand, gender, at least one size and at least one color."
+      );
       return;
     }
+
+    const selectedSizes = sizes.filter((s) =>
+      form.sizeIds.includes(String(s.id))
+    );
+    const selectedColors = colors.filter((c) =>
+      form.colorIds.includes(String(c.id))
+    );
 
     const productPayload = {
       name: form.name,
       description: form.description,
       price: Number(form.price),
-      discountPercent: form.discountPercent
-        ? Number(form.discountPercent)
-        : 0,
+      discountPercent: form.discountPercent ? Number(form.discountPercent) : 0,
       quantity: Number(form.quantity),
       categoryId: Number(form.categoryId),
       brandId: Number(form.brandId),
       genderId: Number(form.genderId),
-      sizeId: Number(form.sizeId),
-      colorId: Number(form.colorId),
+      sizes: selectedSizes.map((s) => ({
+        id: s.id,
+        name: s.name,
+      })),
+      colors: selectedColors.map((c) => ({
+        id: c.id,
+        name: c.name,
+      })),
     };
 
     try {
@@ -125,8 +165,8 @@ export default function ProductAdminPanel({ onProductCreated }) {
         categoryId: "",
         brandId: "",
         genderId: "",
-        sizeId: "",
-        colorId: "",
+        sizeIds: [],
+        colorIds: [],
         discountPercent: "",
       });
 
@@ -244,32 +284,36 @@ export default function ProductAdminPanel({ onProductCreated }) {
 
           <div className="form-field">
             <label>Size</label>
-            <select
-              value={form.sizeId}
-              onChange={(e) => handleChange("sizeId", e.target.value)}
-            >
-              <option value="">Select size</option>
+            <div className="multi-checkbox-group">
               {sizes.map((s) => (
-                <option key={s.id} value={s.id}>
+                <label key={s.id} className="checkbox-inline">
+                  <input
+                    type="checkbox"
+                    value={s.id}
+                    checked={form.sizeIds.includes(String(s.id))}
+                    onChange={handleSizeToggle}
+                  />
                   {s.name}
-                </option>
+                </label>
               ))}
-            </select>
+            </div>
           </div>
 
           <div className="form-field">
-            <label>Color</label>
-            <select
-              value={form.colorId}
-              onChange={(e) => handleChange("colorId", e.target.value)}
-            >
-              <option value="">Select color</option>
+            <label>Colors</label>
+            <div className="multi-checkbox-group">
               {colors.map((c) => (
-                <option key={c.id} value={c.id}>
+                <label key={c.id} className="checkbox-inline">
+                  <input
+                    type="checkbox"
+                    value={c.id}
+                    checked={form.colorIds.includes(String(c.id))}
+                    onChange={handleColorToggle}
+                  />
                   {c.name}
-                </option>
+                </label>
               ))}
-            </select>
+            </div>
           </div>
         </div>
 
@@ -279,9 +323,7 @@ export default function ProductAdminPanel({ onProductCreated }) {
             <textarea
               rows="2"
               value={form.description}
-              onChange={(e) =>
-                handleChange("description", e.target.value)
-              }
+              onChange={(e) => handleChange("description", e.target.value)}
             />
           </div>
         </div>

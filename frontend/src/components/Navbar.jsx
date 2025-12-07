@@ -7,18 +7,22 @@ export default function Navbar() {
   const username = localStorage.getItem("username");
   const rawRole = localStorage.getItem("role");
   const role = rawRole ? rawRole.toLowerCase() : "";
+  const hasClientId = !!localStorage.getItem("clientId");
 
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("role");
-     localStorage.removeItem("clientId");
+    localStorage.removeItem("clientId");
     navigate("/login");
   }
 
   // permissions
-  const canViewOrders = role === "admin" || role === "advanced";
-  const canViewReports = role === "admin" || role === "advanced";
+  const canViewOrders =
+    (role === "admin" || role === "advanced") && !hasClientId;
+  const canViewReports =
+    (role === "admin" || role === "advanced") && !hasClientId;
+  const canManageUsers = role === "admin" && !hasClientId;
 
   return (
     <header className="navbar">
@@ -48,7 +52,7 @@ export default function Navbar() {
               Products
             </NavLink>
 
-            {/* Orders: admin + advanced */}
+ {/* Orders: admin + advanced */}
             {canViewOrders && (
               <NavLink
                 to="/orders"
@@ -60,7 +64,7 @@ export default function Navbar() {
               </NavLink>
             )}
 
-            {/* Reports: admin + advanced */}
+ {/* Reports: admin + advanced */}
             {canViewReports && (
               <NavLink
                 to="/reports"
@@ -69,6 +73,17 @@ export default function Navbar() {
                 }
               >
                 Reports
+              </NavLink>
+            )}
+
+            {canManageUsers && (
+              <NavLink
+                to="/users"
+                className={({ isActive }) =>
+                  isActive ? "nav-link nav-link-active" : "nav-link"
+                }
+              >
+                Users
               </NavLink>
             )}
           </nav>

@@ -497,3 +497,69 @@ select.filter-input {
   display: block;
 }
 
+
+.product-card .product-edit-form .checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem; 
+  margin-top: 0.3rem;
+}
+
+.product-card .product-edit-form .checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #d7e2ff;
+}
+
+.product-card .product-edit-form textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  min-height: 70px;
+  border-radius: 10px;
+  border: 1px solid rgba(120, 150, 200, 0.8);
+  background: rgba(10, 18, 35, 0.95);
+  color: #f5f7ff;
+  font-size: 0.85rem;
+  resize: vertical;
+  outline: none;
+}
+
+.product-card .product-edit-form textarea:focus {
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 1px rgba(64, 169, 255, 0.45);
+}
+
+
+
+.product-card .product-edit-form .section-title {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8ea9ff;
+}
+.product-card .product-edit-form select {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(120, 150, 200, 0.8);
+  background: rgba(10, 18, 35, 0.95);
+  color: #f5f7ff;
+  font-size: 0.9rem;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.product-card .product-edit-form select:focus {
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 1px rgba(64, 169, 255, 0.45);
+}
+
+.product-card .product-edit-form option {
+  background: #0c1222;
+  color: #f5f7ff;
+  padding: 10px;
+}

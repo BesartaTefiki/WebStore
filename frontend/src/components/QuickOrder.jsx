@@ -8,7 +8,7 @@ export default function QuickOrder({ product }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  if (!product) return null; 
+  if (!product) return null;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -29,10 +29,20 @@ export default function QuickOrder({ product }) {
       return;
     }
 
+    if (product.quantity <= 0) {
+      setError("This product is out of stock.");
+      return;
+    }
+
+    if (quantity > product.quantity) {
+      setError(`Only ${product.quantity} item(s) left in stock.`);
+      return;
+    }
+
     try {
       setLoading(true);
 
-  
+
       await createOrder([
         {
           productId: product.id,
@@ -44,7 +54,13 @@ export default function QuickOrder({ product }) {
       setQuantity(1);
     } catch (err) {
       console.error(err);
-      setError("Failed to place order.");
+
+      let message = "Failed to place order.";
+      if (err.response?.data?.message) {
+        message = err.response.data.message;
+      }
+
+      setError(message);
     } finally {
       setLoading(false);
     }
