@@ -57,3 +57,13 @@
   margin-top: 0.2rem;
   color: #a5b4fc;
 }
+
+.quick-order-available {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin-left: 4px;
+}
+
+.quick-order-out-of-stock {
+  color: #fca5a5;
+}

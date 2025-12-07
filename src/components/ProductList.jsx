@@ -48,8 +48,12 @@ export default function ProductList() {
 
   const rawRole = localStorage.getItem("role");
   const role = rawRole ? rawRole.toLowerCase() : "";
+  const hasClientId = !!localStorage.getItem("clientId");
   const isProductManager =
-    role === "admin" || role === "advanced" || role === "simple";
+    (role === "admin" || role === "advanced" || role === "simple") &&
+    !hasClientId;
+
+  const isClient = hasClientId;
 
   // real-time stock
   async function syncAllProductStocks(productsList) {
@@ -225,8 +229,6 @@ export default function ProductList() {
       categoryId: product.categoryId,
       brandId: product.brandId,
       genderId: product.genderId,
-      sizeId: product.sizeId,
-      colorId: product.colorId,
     };
 
     try {
@@ -276,10 +278,10 @@ export default function ProductList() {
 
   return (
     <div className="products-page">
-    
+
       <form className="filters-bar" onSubmit={handleSearch}>
         <div className="filters-grid">
-         
+          
           <div className="filter-field">
             <label>Category</label>
             <select
@@ -298,7 +300,7 @@ export default function ProductList() {
             </select>
           </div>
 
-          {/* Brand */}
+ {/* Brand */}
           <div className="filter-field">
             <label>Brand</label>
             <select
@@ -317,7 +319,7 @@ export default function ProductList() {
             </select>
           </div>
 
- 
+
           <div className="filter-field">
             <label>Gender</label>
             <select
@@ -336,7 +338,7 @@ export default function ProductList() {
             </select>
           </div>
 
-          {/* Size */}
+    {/* Size */}
           <div className="filter-field">
             <label>Size</label>
             <select
@@ -355,7 +357,7 @@ export default function ProductList() {
             </select>
           </div>
 
-          {/* Color */}
+{/* Color */}
           <div className="filter-field">
             <label>Color</label>
             <select
@@ -374,7 +376,7 @@ export default function ProductList() {
             </select>
           </div>
 
-          {/* Price range */}
+   {/* Price range */}
           <div className="filter-field price-range">
             <label>Price range (€)</label>
             <div style={{ display: "flex", gap: "0.35rem" }}>
@@ -400,7 +402,7 @@ export default function ProductList() {
             </div>
           </div>
 
-          {/* In stock */}
+{/* In stock */}
           <div className="filter-field filter-checkbox">
             <label className="checkbox-label">
               <input
@@ -471,8 +473,21 @@ export default function ProductList() {
               <div className="product-tags">
                 {p.brand && <span className="tag">{p.brand.name}</span>}
                 {p.category && <span className="tag">{p.category.name}</span>}
-                {p.size && <span className="tag">{p.size.name}</span>}
-                {p.color && <span className="tag">{p.color.name}</span>}
+
+                {Array.isArray(p.sizes) &&
+                  p.sizes.map((s) => (
+                    <span key={`size-${p.id}-${s.id}`} className="tag">
+                      {s.name}
+                    </span>
+                  ))}
+
+                {Array.isArray(p.colors) &&
+                  p.colors.map((c) => (
+                    <span key={`color-${p.id}-${c.id}`} className="tag">
+                      {c.name}
+                    </span>
+                  ))}
+
                 {p.gender && <span className="tag">{p.gender.name}</span>}
               </div>
 
@@ -575,10 +590,12 @@ export default function ProductList() {
                 </form>
               )}
 
-              <QuickOrder
-                product={p}
-                onOrderPlaced={() => refreshProductStock(p.id)}
-              />
+              {isClient && (
+                <QuickOrder
+                  product={p}
+                  onOrderPlaced={() => refreshProductStock(p.id)}
+                />
+              )}
             </article>
           );
         })}
